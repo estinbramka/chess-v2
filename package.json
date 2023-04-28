@@ -1,0 +1,26 @@
+{
+  "name": "chess-v2",
+  "version": "1.0.0",
+  "description": "This is a second attempt for a online chess game",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently -n server,client -c green,blue \"npm run server\" \"npm run client\"",
+    "server": "npm run devStart --prefix server",
+    "client": "npm start --prefix client",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/estinbramka/chess-v2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/estinbramka/chess-v2/issues"
+  },
+  "homepage": "https://github.com/estinbramka/chess-v2#readme",
+  "dependencies": {
+    "concurrently": "^8.0.1"
+  }
+}
