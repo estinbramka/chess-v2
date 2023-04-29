@@ -1,0 +1,6 @@
+.chessboard{
+    aspect-ratio: 1/1;
+    width: 100vh;
+    background-image: url('../../assets/chessboard.png');
+    background-size: cover;
+}
