@@ -1,8 +1,22 @@
 .chessboard{
     aspect-ratio: 1/1;
-    width: 100vh;
+    flex: 1 1 auto;
     background-image: url('../../assets/chessboard.png');
     background-size: 100% 100%;
     position: relative;
     border-radius: 3px;
+}
+
+.chessboard-sidebar{
+    flex: 0 0 40px;
+}
+
+.pov-button{
+    width: 100%;
+    aspect-ratio: 1/1;
+}
+
+.chessboard-layout{
+    display: flex;
+    width: 100vh;
 }
