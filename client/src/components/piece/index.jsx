@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import './piece-styles.css'
 
-export default function Piece({ piece, parent, pov }) {
+export default function Piece({ piece, parent, pov, makeMove }) {
     const pieceElm = useRef();
 
     function dragMouseDown(e) {
@@ -62,19 +62,12 @@ export default function Piece({ piece, parent, pov }) {
                 indexX = i;
             }
         }
-        calculateMove(indexX, indexY);
-        pieceElm.current.removeAttribute("style");
-        var el = pieceElm.current;
-        for (let i = el.classList.length - 1; i >= 0; i--) {
-            const className = el.classList[i];
-            if (className.startsWith('square-')) {
-                el.classList.remove(className);
-                el.classList.add(`square-${indexX}${indexY}`);
-            }
-        }
 
         document.onmouseup = null;
         document.onmousemove = null;
+
+        calculateMove(indexX, indexY);
+        //pieceElm.current.removeAttribute("style");
     }
 
     function calculateMove(x, y) {
@@ -88,7 +81,11 @@ export default function Piece({ piece, parent, pov }) {
         let yPrev = parseInt(Array.from(piece.pos)[1]);
         let from = xAxis[xPrev - 1] + yAxis[yPrev - 1];
         let to = xAxis[x - 1] + yAxis[y - 1];
-        console.log(from, to, pov);
+        let status = makeMove(from, to);
+        if (status === 'error') {
+            pieceElm.current.removeAttribute("style");
+        }
+        //console.log(from, to, pov);
     }
 
     return (

@@ -19,12 +19,7 @@ export const createBoard = (fenString, pov) => {
 
     const fenPieces = fen.split('/').join(''); //remove the row delimiters '/'
     //rnbqkbnrpppppppp8888PPPPPPPPRNBQKBNR
-    let pieces
-    if (pov === 'black') {
-        pieces = Array.from(fenPieces).reverse();
-    } else if (pov === 'white') {
-        pieces = Array.from(fenPieces);
-    }
+    let pieces = Array.from(fenPieces);
 
     //Save individual pieces for each of the 64 cells
     Array.from(fenPieces).forEach((item, index) => {
@@ -50,10 +45,12 @@ export const createBoard = (fenString, pov) => {
 
     const cells = []; //[a1, b1, c1..., h8]
     for (let i = 0; i < rows.length; i++) {
-        const row = rows[i];
         for (let j = 0; j < columns.length; j++) {
-            const col = columns[j];
-            cells.push(col + row); //e.g a1, b1, c1...
+            if (pov === 'black') {
+                cells.push(rows[j] + columns[i]);
+            } else if (pov === 'white') {
+                cells.push(columns[j] + rows[i]); //e.g a1, b1, c1...
+            }
         }
     }
     const board = [];
