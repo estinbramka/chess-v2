@@ -15,6 +15,37 @@ export default function Chessboard() {
         setBoard(createBoard(fen, pov));
     }, [fen, pov])
     const boardElm = useRef();
+    useEffect(() => {
+        socket.emit('join', { name: 'Frank', gameID: '20' }, ({ error, color }) => {
+            console.log({ color, error });
+        });
+
+        function welcome({ message, opponent }) {
+            console.log({ message, opponent });
+        }
+        function opponentJoin({ message, opponent }) {
+            console.log({ message, opponent });
+        }
+        function opponentMove({ from, to }) {
+            chess.move({ from, to });
+            setFen(chess.fen());
+        }
+        function message({ message }) {
+            console.log({ message });
+        }
+
+        socket.on('welcome', welcome);
+        socket.on('opponentJoin', opponentJoin);
+        socket.on('opponentMove', opponentMove);
+        socket.on('message', message);
+
+        return () => {
+            socket.off('welcome', welcome);
+            socket.off('opponentJoin', opponentJoin);
+            socket.off('opponentMove', opponentMove);
+            socket.off('message', message);
+        };
+    }, [chess]);
 
     function makeMove(from, to) {
         console.log(from, to);
@@ -24,6 +55,7 @@ export default function Chessboard() {
             //console.log(error);
             return 'error';
         }
+        socket.emit('move', { gameID: '20', from, to });
         setFen(chess.fen());
         return 'success';
     }
