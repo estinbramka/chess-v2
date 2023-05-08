@@ -6,7 +6,7 @@ import { Chess } from 'chess.js'
 import { socket } from '../../socket';
 
 const FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-export default function Chessboard() {
+export default function Chessboard({ name, gameID }) {
     const [fen, setFen] = useState(FEN);
     const { current: chess } = useRef(new Chess(fen));
     const [pov, setPov] = useState('white');
@@ -16,7 +16,8 @@ export default function Chessboard() {
     }, [fen, pov])
     const boardElm = useRef();
     useEffect(() => {
-        socket.emit('join', { name: 'Frank', gameID: '20' }, ({ error, color }) => {
+        console.log(name, gameID);
+        socket.emit('join', { name: name, gameID: gameID }, ({ error, color }) => {
             console.log({ color, error });
         });
 
@@ -45,7 +46,7 @@ export default function Chessboard() {
             socket.off('opponentMove', opponentMove);
             socket.off('message', message);
         };
-    }, [chess]);
+    }, [chess, name, gameID]);
 
     function makeMove(from, to) {
         console.log(from, to);
@@ -55,7 +56,7 @@ export default function Chessboard() {
             //console.log(error);
             return 'error';
         }
-        socket.emit('move', { gameID: '20', from, to });
+        socket.emit('move', { gameID: gameID, from, to });
         setFen(chess.fen());
         return 'success';
     }

@@ -9,6 +9,7 @@ class Player {
 	}
 }
 const addPlayer = ({ gameID, name, playerID }) => {
+	//console.log('flag:'+!games[gameID]);
 	if (!games[gameID]) {
 		const color = Math.random() <= 0.5 ? 'w' : 'b';
 		const player = new Player(name, color, playerID, gameID);
@@ -23,8 +24,8 @@ const addPlayer = ({ gameID, name, playerID }) => {
 	if (games[gameID].length >= 2) {
 		return { error: 'This game is full' };
 	}
-    //console.log(games[gameID]);
-    if (games[gameID][0].playerID === playerID) {
+	//console.log(games[gameID]);
+	if (games[gameID][0].playerID === playerID) {
 		return { error: 'This Player already joined' };
 	}
 
@@ -44,10 +45,15 @@ const removePlayer = (playerID) => {
 	for (const game in games) {
 		let players = games[game];
 		const index = players.findIndex((pl) => pl.playerID === playerID);
-		console.log({ players, index });
+		//console.log({ players, index });
 
 		if (index !== -1) {
-			return players.splice(index, 1)[0];
+			let player = players.splice(index, 1)[0];
+			if (games[game].length === 0) {
+				delete games[game];
+				//console.log('remove', players, games[game]);
+			}
+			return player;
 		}
 	}
 };
