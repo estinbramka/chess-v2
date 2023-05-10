@@ -34,17 +34,22 @@ export default function Chessboard({ name, gameID }) {
         function message({ message }) {
             console.log({ message });
         }
+        function connectError(message) {
+            console.log(message);
+        }
 
         socket.on('welcome', welcome);
         socket.on('opponentJoin', opponentJoin);
         socket.on('opponentMove', opponentMove);
         socket.on('message', message);
+        socket.on('connect_error', connectError);
 
         return () => {
             socket.off('welcome', welcome);
             socket.off('opponentJoin', opponentJoin);
             socket.off('opponentMove', opponentMove);
             socket.off('message', message);
+            socket.off('connect_error', connectError);
         };
     }, [chess, name, gameID]);
 

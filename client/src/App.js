@@ -6,8 +6,8 @@ import Login from './pages/Login';
 import Home from './pages/Home';
 
 function App() {
-  const [name, setName] = useState('');
-  const [gameID, setGameID] = useState('');
+  const [name, setName] = useState('user');
+  const [gameID, setGameID] = useState('20');
   return (
     <Routes>
       <Route path='/' element={<div className='App'><Chessboard name={name} gameID={gameID}></Chessboard></div>} />
