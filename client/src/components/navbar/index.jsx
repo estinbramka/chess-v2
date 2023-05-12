@@ -4,8 +4,8 @@ import { fetchGet } from "../../function/fetch";
 export default function Navbar() {
     const navigate = useNavigate();
 
-    function logout() {
-        let result = fetchGet('http://localhost:5000/logout');
+    async function logout() {
+        let result = await fetchGet('http://localhost:5000/logout');
         if (!result.auth) {
             navigate("/login");
         }

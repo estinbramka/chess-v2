@@ -39,7 +39,6 @@ export default function Chessboard({ gameID, setPrevPage }) {
         }
         function connectError(message) {
             console.log(message);
-            setPrevPage(true);
             navigate('/login');
         }
 
@@ -56,6 +55,7 @@ export default function Chessboard({ gameID, setPrevPage }) {
             socket.off('message', message);
             socket.off('connect_error', connectError);
             socket.disconnect();
+            setPrevPage(true);
         };
     }, [chess, gameID, navigate, setPrevPage]);
 
