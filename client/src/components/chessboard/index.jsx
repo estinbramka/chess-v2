@@ -4,20 +4,23 @@ import { createBoard } from '../../function/create-board';
 import { useEffect, useRef, useState } from 'react';
 import { Chess } from 'chess.js'
 import { socket } from '../../socket';
+import { useNavigate } from 'react-router-dom';
 
 const FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-export default function Chessboard({ name, gameID }) {
+export default function Chessboard({ gameID, setPrevPage }) {
     const [fen, setFen] = useState(FEN);
     const { current: chess } = useRef(new Chess(fen));
     const [pov, setPov] = useState('white');
     const [board, setBoard] = useState(createBoard('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', pov))
+    const navigate = useNavigate();
     useEffect(() => {
         setBoard(createBoard(fen, pov));
     }, [fen, pov])
     const boardElm = useRef();
     useEffect(() => {
-        console.log(name, gameID);
-        socket.emit('join', { name: name, gameID: gameID }, ({ error, color }) => {
+        //console.log(name, gameID);
+        socket.connect();
+        socket.emit('join', { gameID: gameID }, ({ error, color }) => {
             console.log({ color, error });
         });
 
@@ -36,6 +39,8 @@ export default function Chessboard({ name, gameID }) {
         }
         function connectError(message) {
             console.log(message);
+            setPrevPage(true);
+            navigate('/login');
         }
 
         socket.on('welcome', welcome);
@@ -50,8 +55,9 @@ export default function Chessboard({ name, gameID }) {
             socket.off('opponentMove', opponentMove);
             socket.off('message', message);
             socket.off('connect_error', connectError);
+            socket.disconnect();
         };
-    }, [chess, name, gameID]);
+    }, [chess, gameID, navigate, setPrevPage]);
 
     function makeMove(from, to) {
         console.log(from, to);

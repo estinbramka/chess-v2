@@ -1,12 +1,35 @@
 import { useNavigate } from "react-router-dom"
-import { fetchPost } from "../../function/fetch";
+import { fetchGet, fetchPost } from "../../function/fetch";
+import { useEffect, useState } from "react";
 
-export default function Login({ name, setName }) {
+export default function Login({ prevPage }) {
+    const [name, setName] = useState('');
     const navigate = useNavigate();
 
-    function login(e) {
+    useEffect(() => {
+        let result = fetchGet('http://localhost:5000/session');
+        result.then(res => {
+            if (res.auth) {
+                if (prevPage) {
+                    navigate(-1);
+                } else {
+                    navigate('/home');
+                }
+            }
+        })
+    }, [navigate, prevPage])
+
+    async function login(e) {
         e.preventDefault();
-        fetchPost('http://localhost:5000/login',{name});
+        let result = await fetchPost('http://localhost:5000/login', { name });
+        if (result.auth) {
+            //console.log(prevPage);
+            if (prevPage) {
+                navigate(-1);
+            } else {
+                navigate('/home');
+            }
+        }
     }
 
     return (

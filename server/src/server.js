@@ -28,13 +28,21 @@ app.post("/login", (req, res) => {
     req.session.authenticated = true;
     req.session.user = { name: req.body.name, role: 'guest' }
     //req.session.save();
-    res.status(200).json({ message: 'Session Created' });
+    res.status(200).json({ auth: req.session.authenticated, message: 'Session Created' });
 });
 
-//app.get("/session", (req, res) => {
+app.get("/session", (req, res) => {
     //console.log(req.session.authenticated);
-    //res.status(200).json({ auth: req.session.authenticated, user: req.session.user });
-//})
+    if (req.session && req.session.authenticated)
+        res.status(200).json({ auth: req.session.authenticated, message: 'Session Exists',username:req.session.user.name });
+    else
+        res.status(404).json({ auth: false, message: 'Session Not found' });
+})
+
+app.get("/logout", (req, res) =>{
+    req.session.destroy();
+    res.status(200).json({ auth: false, message: 'Session Deleted' });
+})
 
 // convert a connect middleware to a Socket.IO middleware
 const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
@@ -44,7 +52,7 @@ io.use(wrap(sessionMiddleware));
 // only allow authenticated users
 io.use((socket, next) => {
     const session = socket.request.session;
-    console.log(session, session.authenticated)
+    //console.log(session, session.authenticated)
     if (session && session.authenticated) {
         next();
     } else {
@@ -52,10 +60,13 @@ io.use((socket, next) => {
     }
 });
 io.on('connection', (socket) => {
-    socket.on('join', ({ name, gameID }, callback) => {
+    //console.log(socket.id);
+    socket.on('join', ({ gameID }, callback) => {
+        let name = socket.request.session.user.name;
+        //console.log('hit')
         const { error, player, opponent } = addPlayer({
             name,
-            playerID: socket.id,
+            playerID: socket.request.session.id,
             gameID,
         });
         if (error) {
@@ -89,14 +100,14 @@ io.on('connection', (socket) => {
     });
 
     socket.on('disconnect', () => {
-        const player = removePlayer(socket.id);
+        const player = removePlayer(socket.request.session.id);
 
         if (player) {
             io.to(player.gameID).emit('message', {
                 message: `${player.name} has left the game.`,
             });
             //socket.broadcast.to(player.gameID).emit('opponentLeft');
-            console.log(`${player.name} has left the game ${player.gameID}`);
+            console.log(`${player.name} has left the game ${player.gameID} sessionID ${socket.request.session.id}`);
         }
     });
 });
