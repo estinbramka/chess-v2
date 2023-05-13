@@ -39,7 +39,7 @@ export default function Chessboard({ gameID, setPrevPage }) {
         }
         function connectError(message) {
             console.log(message);
-            navigate('/login');
+            navigate('/home');
         }
 
         socket.on('welcome', welcome);

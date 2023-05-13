@@ -42,7 +42,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.post("/login", (req, res) => {
-    console.log(req.body);
+    //console.log(req.body);
     req.session.authenticated = true;
     req.session.user = { name: req.body.name, role: 'guest' }
     //req.session.save();
