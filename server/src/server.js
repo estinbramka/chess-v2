@@ -20,7 +20,8 @@ let sessionOBJ = {
 };
 if (process.env.NODE_ENV === 'production') {
     app.set('trust proxy', 1) // trust first proxy
-    sessionOBJ.cookie.sameSite = "none"
+    sessionOBJ.cookie.sameSite = "none";
+    sessionOBJ.cookie.secure = true;
 }
 const sessionMiddleware = session(sessionOBJ);
 if (process.env.NODE_ENV === 'production') {
