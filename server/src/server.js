@@ -1,3 +1,4 @@
+const dotenv = require('dotenv').config()
 const express = require('express');
 const session = require('express-session')
 const cors = require('cors');
@@ -5,21 +6,22 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
+const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.NODE_APP_URI_PRODUCTION : process.env.NODE_APP_URI_DEVELOPMENT;
 const sessionMiddleware = session({
-    secret: "changeit",
+    secret: process.env.NODE_APP_SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
 });
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: BASE_URL,
         credentials: true
     }
 });
-const PORT = 5000;
+const PORT = process.env.NODE_APP_PORT;
 const { addPlayer, game, removePlayer } = require('./handleGames');
 app.use(sessionMiddleware);
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(cors({ origin: BASE_URL, credentials: true }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
