@@ -23,7 +23,9 @@ export default function Login({ prevPage }) {
         e.preventDefault();
         let result = await fetchPost('/login', { name });
         if (result.auth) {
-            //console.log(prevPage);
+            console.log(result);
+            window.localStorage.setItem('Token', result.accessToken);
+            window.localStorage.setItem('RefreshToken', result.refreshToken);
             if (prevPage) {
                 navigate(-1);
             } else {

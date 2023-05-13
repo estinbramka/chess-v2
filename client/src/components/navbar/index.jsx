@@ -1,12 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
-import { fetchGet } from "../../function/fetch";
+import { fetchPost } from "../../function/fetch";
 
 export default function Navbar() {
     const navigate = useNavigate();
 
     async function logout() {
-        let result = await fetchGet('/logout');
+        let refreshToken = window.localStorage.getItem('RefreshToken');
+        let result = await fetchPost('/logout', { token: refreshToken });
         if (!result.auth) {
+            window.localStorage.removeItem('Token');
+            window.localStorage.removeItem('RefreshToken');
             navigate("/login");
         }
         console.log(result);

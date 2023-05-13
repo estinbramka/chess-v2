@@ -1,6 +1,7 @@
-const dotenv = require('dotenv').config()
+const dotenv = require('dotenv').config();
 const express = require('express');
-const session = require('express-session')
+const session = require('express-session');
+const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const app = express();
 const http = require('http');
@@ -41,26 +42,58 @@ app.use(cors({ origin: BASE_URL, credentials: true }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+let refreshTokens = []
+
 app.post("/login", (req, res) => {
     //console.log(req.body);
-    req.session.authenticated = true;
-    req.session.user = { name: req.body.name, role: 'guest' }
+    //req.session.authenticated = true;
+    //req.session.user = { name: req.body.name, role: 'guest' }
+    const user = { name: req.body.name, role: 'guest' };
+    const accessToken = generateAccessToken(user);
+    const refreshToken = jwt.sign(user, process.env.NODE_APP_REFRESH_TOKEN_SECRET)
+    refreshTokens.push(refreshToken)
     //req.session.save();
-    res.status(200).json({ auth: req.session.authenticated, message: 'Session Created' });
+    res.status(200).json({ auth: true, accessToken: accessToken, refreshToken: refreshToken });
 });
 
-app.get("/session", (req, res) => {
-    //console.log(req.session.authenticated);
-    if (req.session && req.session.authenticated)
-        res.status(200).json({ auth: req.session.authenticated, message: 'Session Exists', username: req.session.user.name });
-    else
-        res.status(404).json({ auth: false, message: 'Session Not found' });
+app.post('/token', (req, res) => {
+    const refreshToken = req.body.token
+    console.log(refreshToken);
+    if (refreshToken == null) return res.status(200).json({ auth: false, message: 'Refresh token doesnt exist' });
+    if (!refreshTokens.includes(refreshToken)) return res.status(200).json({ auth: false, message: 'Refresh token doesnt exist' });
+    jwt.verify(refreshToken, process.env.NODE_APP_REFRESH_TOKEN_SECRET, (err, user) => {
+        if (err) return res.status(200).json({ auth: false, message: 'Refresh token not verified' });
+        const accessToken = generateAccessToken({ name: user.name })
+        res.json({ auth: true, accessToken: accessToken })
+    })
 })
 
-app.get("/logout", (req, res) => {
-    req.session.destroy();
+app.get("/session", authenticateToken, (req, res) => {
+    console.log(req.user);
+    res.status(200).json({ auth: true, message: 'Session Exists', username: req.user.name });
+})
+
+app.post("/logout", (req, res) => {
+    refreshTokens = refreshTokens.filter(token => token !== req.body.token)
     res.status(200).json({ auth: false, message: 'Session Deleted' });
 })
+
+function generateAccessToken(user) {
+    return jwt.sign(user, process.env.NODE_APP_ACCESS_TOKEN_SECRET, { expiresIn: '15s' })
+}
+
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+    if (token == null) return res.status(401).json({ auth: false, message: 'Token not found' })
+
+    jwt.verify(token, process.env.NODE_APP_ACCESS_TOKEN_SECRET, (err, user) => {
+        //console.log(err)
+        if (err) return res.status(403).json({ auth: false, message: 'Verification Error' })
+        req.user = user
+        next()
+    })
+}
 
 // convert a connect middleware to a Socket.IO middleware
 const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
