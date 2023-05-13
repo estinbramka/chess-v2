@@ -7,17 +7,22 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.NODE_APP_URI_PRODUCTION : process.env.NODE_APP_URI_DEVELOPMENT;
-const sessionMiddleware = session({
+let sessionOBJ = {
     secret: process.env.NODE_APP_SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 7,
-        secure: "auto",
-        httpOnly: true,
-        sameSite: "none"
+        //secure: "auto",
+        //httpOnly: true,
+        //sameSite: "none"
     }
-});
+};
+if (process.env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1) // trust first proxy
+    sessionOBJ.cookie.sameSite = "none"
+}
+const sessionMiddleware = session(sessionOBJ);
 if (process.env.NODE_ENV === 'production') {
     app.set('trust proxy', 1) // trust first proxy
 }
