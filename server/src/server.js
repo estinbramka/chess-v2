@@ -11,10 +11,11 @@ let sessionOBJ = {
     secret: process.env.NODE_APP_SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    Proxy: true,
     cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 7,
         //secure: "auto",
-        //httpOnly: true,
+        httpOnly: true,
         //sameSite: "none"
     }
 };
