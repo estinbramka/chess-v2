@@ -12,12 +12,15 @@ const sessionMiddleware = session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        maxAge: 1000*60*60*24*7,
-        secure: true,
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+        secure: "auto",
         httpOnly: true,
-        sameSite: "none"
+        //sameSite: "none"
     }
 });
+if (process.env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1) // trust first proxy
+}
 const io = new Server(server, {
     cors: {
         origin: BASE_URL,
