@@ -7,7 +7,6 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.NODE_APP_URI_PRODUCTION : process.env.NODE_APP_URI_DEVELOPMENT;
-console.log(BASE_URL);
 const sessionMiddleware = session({
     secret: process.env.NODE_APP_SESSION_SECRET,
     resave: false,
@@ -27,7 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.post("/login", (req, res) => {
-    //console.log(req.body);
+    console.log(req.body);
     req.session.authenticated = true;
     req.session.user = { name: req.body.name, role: 'guest' }
     //req.session.save();
