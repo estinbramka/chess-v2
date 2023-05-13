@@ -5,7 +5,7 @@ export default function Navbar() {
     const navigate = useNavigate();
 
     async function logout() {
-        let result = await fetchGet('http://localhost:5000/logout');
+        let result = await fetchGet('/logout');
         if (!result.auth) {
             navigate("/login");
         }

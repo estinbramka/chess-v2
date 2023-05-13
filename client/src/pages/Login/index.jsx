@@ -7,7 +7,7 @@ export default function Login({ prevPage }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        let result = fetchGet('http://localhost:5000/session');
+        let result = fetchGet('/session');
         result.then(res => {
             if (res.auth) {
                 if (prevPage) {
@@ -21,7 +21,7 @@ export default function Login({ prevPage }) {
 
     async function login(e) {
         e.preventDefault();
-        let result = await fetchPost('http://localhost:5000/login', { name });
+        let result = await fetchPost('/login', { name });
         if (result.auth) {
             //console.log(prevPage);
             if (prevPage) {

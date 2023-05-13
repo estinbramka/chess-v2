@@ -8,7 +8,7 @@ export default function Home({ gameID, setGameID }) {
 
 
     useEffect(() => {
-        let result = fetchGet('http://localhost:5000/session');
+        let result = fetchGet('/session');
         result.then(res => {
             if (!res.auth) {
                 navigate('/login')

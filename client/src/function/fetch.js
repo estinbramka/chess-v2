@@ -1,6 +1,16 @@
 export async function fetchPost(url, data) {
+    //console.log(process.env.NODE_ENV);
+    let baseurl;
+    switch (process.env.NODE_ENV) {
+        case 'production':
+            baseurl = process.env.REACT_APP_URI_PRODUCTION;
+            break;
+        case 'development':
+        default:
+            baseurl = process.env.REACT_APP_URI_DEVELOPMENT;
+    }
     try {
-        const response = await fetch(url, {
+        const response = await fetch(baseurl + url, {
             method: "POST", // or 'PUT'
             credentials: "include",
             headers: {
@@ -17,9 +27,18 @@ export async function fetchPost(url, data) {
     }
 }
 
-export async function fetchGet(url){
+export async function fetchGet(url) {
+    let baseurl;
+    switch (process.env.NODE_ENV) {
+        case 'production':
+            baseurl = process.env.REACT_APP_URI_PRODUCTION;
+            break;
+        case 'development':
+        default:
+            baseurl = process.env.REACT_APP_URI_DEVELOPMENT;
+    }
     try {
-        const response = await fetch(url, {
+        const response = await fetch(baseurl + url, {
             method: "GET", // or 'PUT'
             credentials: "include",
             headers: {
