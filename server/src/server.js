@@ -11,6 +11,12 @@ const sessionMiddleware = session({
     secret: process.env.NODE_APP_SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    cookie: {
+        maxAge: 1000*60*60*24*7,
+        secure: true,
+        httpOnly: true,
+        sameSite: "none"
+    }
 });
 const io = new Server(server, {
     cors: {
@@ -36,12 +42,12 @@ app.post("/login", (req, res) => {
 app.get("/session", (req, res) => {
     //console.log(req.session.authenticated);
     if (req.session && req.session.authenticated)
-        res.status(200).json({ auth: req.session.authenticated, message: 'Session Exists',username:req.session.user.name });
+        res.status(200).json({ auth: req.session.authenticated, message: 'Session Exists', username: req.session.user.name });
     else
         res.status(404).json({ auth: false, message: 'Session Not found' });
 })
 
-app.get("/logout", (req, res) =>{
+app.get("/logout", (req, res) => {
     req.session.destroy();
     res.status(200).json({ auth: false, message: 'Session Deleted' });
 })
