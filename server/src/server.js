@@ -7,6 +7,7 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.NODE_APP_URI_PRODUCTION : process.env.NODE_APP_URI_DEVELOPMENT;
+console.log(BASE_URL);
 const sessionMiddleware = session({
     secret: process.env.NODE_APP_SESSION_SECRET,
     resave: false,
