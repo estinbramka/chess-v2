@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom"
 import { fetchGet, fetchPost } from "../../function/fetch";
 import { useEffect, useState } from "react";
 
-export default function Login({ prevPage }) {
+export default function Login() {
     const [name, setName] = useState('');
     const navigate = useNavigate();
 
@@ -10,14 +10,10 @@ export default function Login({ prevPage }) {
         let result = fetchGet('/session');
         result.then(res => {
             if (res.auth) {
-                if (prevPage) {
-                    navigate(-1);
-                } else {
-                    navigate('/home');
-                }
+                navigate('/home');
             }
         })
-    }, [navigate, prevPage])
+    }, [navigate])
 
     async function login(e) {
         e.preventDefault();
@@ -26,11 +22,7 @@ export default function Login({ prevPage }) {
             console.log(result);
             window.localStorage.setItem('Token', result.accessToken);
             window.localStorage.setItem('RefreshToken', result.refreshToken);
-            if (prevPage) {
-                navigate(-1);
-            } else {
-                navigate('/home');
-            }
+            navigate('/home');
         }
     }
 

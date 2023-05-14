@@ -7,25 +7,20 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.NODE_APP_URI_PRODUCTION : process.env.NODE_APP_URI_DEVELOPMENT;
-//if (process.env.NODE_ENV === 'production') {
-//    app.set('trust proxy', 1) // trust first proxy
-//}
 const io = new Server(server, {
     cors: {
         origin: BASE_URL,
-        //credentials: true
     }
 });
 const PORT = process.env.NODE_APP_PORT;
 const { addPlayer, game, removePlayer } = require('./handleGames');
-app.use(cors({ origin: BASE_URL, /*credentials: true*/ }));
+app.use(cors({ origin: BASE_URL }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 let refreshTokens = []
 
 app.post("/login", (req, res) => {
-    //console.log(req.body);
     //req.session.authenticated = true;
     //req.session.user = { name: req.body.name, role: 'guest' }
     const user = { name: req.body.name, role: 'guest' };
@@ -38,7 +33,6 @@ app.post("/login", (req, res) => {
 
 app.post('/token', (req, res) => {
     const refreshToken = req.body.token
-    //console.log(refreshToken);
     if (refreshToken == null) return res.status(200).json({ auth: false, message: 'Refresh token doesnt exist' });
     if (!refreshTokens.includes(refreshToken)) return res.status(200).json({ auth: false, message: 'Refresh token doesnt exist' });
     jwt.verify(refreshToken, process.env.NODE_APP_REFRESH_TOKEN_SECRET, (err, user) => {
@@ -49,7 +43,6 @@ app.post('/token', (req, res) => {
 })
 
 app.get("/session", authenticateToken, (req, res) => {
-    //console.log(req.user);
     res.status(200).json({ auth: true, message: 'Session Exists', username: req.user.name });
 })
 
@@ -68,20 +61,27 @@ function authenticateToken(req, res, next) {
     if (token == null) return res.status(401).json({ auth: false, message: 'Token not found' })
 
     jwt.verify(token, process.env.NODE_APP_ACCESS_TOKEN_SECRET, (err, user) => {
-        //console.log(err)
         if (err) return res.status(403).json({ auth: false, message: 'Verification Error' })
         req.user = user
         next()
     })
 }
 
+io.use((socket, next) => {
+    const token = socket.handshake.auth.token;
+    if (token == null) return next(new Error("unauthorized"));
 
+    jwt.verify(token, process.env.NODE_APP_ACCESS_TOKEN_SECRET, (err, user) => {
+        if (err) return next(new Error("unauthorized"));
+        socket.user = user
+        next();
+    })
+});
 
 io.on('connection', (socket) => {
-    //console.log(socket.id);
+    //console.log(socket.user);
     socket.on('join', ({ gameID }, callback) => {
-        let name = 'socket.request.session.user.name';
-        //console.log('hit')
+        let name = socket.user.name;
         const { error, player, opponent } = addPlayer({
             name,
             playerID: socket.id,

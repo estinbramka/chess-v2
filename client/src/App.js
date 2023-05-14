@@ -8,13 +8,12 @@ import Navbar from './components/navbar';
 
 function App() {
   const [gameID, setGameID] = useState('20');
-  const [prevPage, setPrevPage] = useState(false);
   return (
     <>
       <Navbar></Navbar>
       <Routes>
-        <Route path='/' element={<div className='App'><Chessboard gameID={gameID} setPrevPage={setPrevPage}></Chessboard></div>} />
-        <Route path='/login' element={<Login prevPage={prevPage}></Login>} />
+        <Route path='/' element={<div className='App'><Chessboard gameID={gameID}></Chessboard></div>} />
+        <Route path='/login' element={<Login></Login>} />
         <Route path='/home' element={<Home gameID={gameID} setGameID={setGameID}></Home>} />
       </Routes>
     </>

@@ -5,14 +5,16 @@ import { useEffect, useRef, useState } from 'react';
 import { Chess } from 'chess.js'
 import { socket } from '../../socket';
 import { useNavigate } from 'react-router-dom';
+import { refreshToken } from '../../function/fetch';
 
 const FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-export default function Chessboard({ gameID, setPrevPage }) {
+export default function Chessboard({ gameID }) {
     const [fen, setFen] = useState(FEN);
     const { current: chess } = useRef(new Chess(fen));
     const [pov, setPov] = useState('white');
     const [board, setBoard] = useState(createBoard('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', pov))
     const navigate = useNavigate();
+    const countConnections = useRef(0);
     useEffect(() => {
         setBoard(createBoard(fen, pov));
     }, [fen, pov])
@@ -38,8 +40,19 @@ export default function Chessboard({ gameID, setPrevPage }) {
             console.log({ message });
         }
         function connectError(message) {
-            console.log(message);
-            navigate('/home');
+            setTimeout(async () => {
+                countConnections.current++;
+                if (countConnections.current > 2) {
+                    navigate('/home');
+                }
+                //console.log(countConnections.current);
+                let RTresult = await refreshToken()
+                if (RTresult.auth) {
+                    window.localStorage.setItem('Token', RTresult.accessToken);
+                }
+                socket.auth.token = window.localStorage.getItem('Token');
+                socket.connect();
+            }, 1000);
         }
 
         socket.on('welcome', welcome);
@@ -55,9 +68,8 @@ export default function Chessboard({ gameID, setPrevPage }) {
             socket.off('message', message);
             socket.off('connect_error', connectError);
             socket.disconnect();
-            setPrevPage(true);
         };
-    }, [chess, gameID, navigate, setPrevPage]);
+    }, [chess, gameID, navigate]);
 
     function makeMove(from, to) {
         console.log(from, to);
