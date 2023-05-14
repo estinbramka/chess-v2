@@ -33,10 +33,10 @@ app.post("/login", (req, res) => {
 
 app.post('/token', (req, res) => {
     const refreshToken = req.body.token
-    if (refreshToken == null) return res.status(200).json({ auth: false, message: 'Refresh token doesnt exist' });
-    if (!refreshTokens.includes(refreshToken)) return res.status(200).json({ auth: false, message: 'Refresh token doesnt exist' });
+    if (refreshToken == null) return res.status(401).json({ auth: false, message: 'Refresh token doesnt exist' });
+    if (!refreshTokens.includes(refreshToken)) return res.status(403).json({ auth: false, message: 'Refresh token doesnt exist' });
     jwt.verify(refreshToken, process.env.NODE_APP_REFRESH_TOKEN_SECRET, (err, user) => {
-        if (err) return res.status(200).json({ auth: false, message: 'Refresh token not verified' });
+        if (err) return res.status(403).json({ auth: false, message: 'Refresh token not verified' });
         const accessToken = generateAccessToken({ name: user.name })
         res.json({ auth: true, accessToken: accessToken })
     })

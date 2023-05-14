@@ -1,18 +1,8 @@
 export async function fetchPost(url, data) {
-    //console.log(process.env.NODE_ENV);
-    let baseurl;
-    switch (process.env.NODE_ENV) {
-        case 'production':
-            baseurl = process.env.REACT_APP_URI_PRODUCTION;
-            break;
-        case 'development':
-        default:
-            baseurl = process.env.REACT_APP_URI_DEVELOPMENT;
-    }
+    let baseurl = getBaseURL();
     try {
         const response = await fetch(baseurl + url, {
-            method: "POST", // or 'PUT'
-            //credentials: "include",
+            method: "POST",
             headers: {
                 'Accept': 'application/json',
                 "Content-Type": "application/json",
@@ -37,23 +27,13 @@ export async function fetchPost(url, data) {
 }
 
 export async function fetchGet(url) {
-    let baseurl;
-    switch (process.env.NODE_ENV) {
-        case 'production':
-            baseurl = process.env.REACT_APP_URI_PRODUCTION;
-            break;
-        case 'development':
-        default:
-            baseurl = process.env.REACT_APP_URI_DEVELOPMENT;
-    }
+    let baseurl = getBaseURL();
     try {
         const response = await fetch(baseurl + url, {
-            method: "GET", // or 'PUT'
-            //credentials: "include",
+            method: "GET",
             headers: {
                 'Accept': 'application/json',
                 'Authorization': 'Bearer ' + window.localStorage.getItem('Token'),
-                //"Content-Type": "application/json",
             },
         });
         if (!response.ok) {
@@ -73,7 +53,31 @@ export async function fetchGet(url) {
 }
 
 export async function refreshToken() {
+    let baseurl = getBaseURL();
     let refreshToken = window.localStorage.getItem('RefreshToken');
-    let result = await fetchPost('/token', { token: refreshToken });
+    //let result = await fetchPost('/token', { token: refreshToken });
+    const response = await fetch(baseurl + '/token', {
+        method: "POST",
+        headers: {
+            'Accept': 'application/json',
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + window.localStorage.getItem('Token'),
+        },
+        body: JSON.stringify({ token: refreshToken }),
+    });
+    const result = await response.json();
     return result;
+}
+
+function getBaseURL() {
+    let baseurl;
+    switch (process.env.NODE_ENV) {
+        case 'production':
+            baseurl = process.env.REACT_APP_URI_PRODUCTION;
+            break;
+        case 'development':
+        default:
+            baseurl = process.env.REACT_APP_URI_DEVELOPMENT;
+    }
+    return baseurl;
 }
