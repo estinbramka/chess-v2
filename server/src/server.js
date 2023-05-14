@@ -1,6 +1,5 @@
 const dotenv = require('dotenv').config();
 const express = require('express');
-const session = require('express-session');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const app = express();
@@ -8,37 +7,18 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.NODE_APP_URI_PRODUCTION : process.env.NODE_APP_URI_DEVELOPMENT;
-let sessionOBJ = {
-    secret: process.env.NODE_APP_SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    Proxy: true,
-    cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 7,
-        //secure: "auto",
-        httpOnly: true,
-        //sameSite: "none"
-    }
-};
-if (process.env.NODE_ENV === 'production') {
-    app.set('trust proxy', 1) // trust first proxy
-    sessionOBJ.cookie.sameSite = "none";
-    sessionOBJ.cookie.secure = true;
-}
-const sessionMiddleware = session(sessionOBJ);
-if (process.env.NODE_ENV === 'production') {
-    app.set('trust proxy', 1) // trust first proxy
-}
+//if (process.env.NODE_ENV === 'production') {
+//    app.set('trust proxy', 1) // trust first proxy
+//}
 const io = new Server(server, {
     cors: {
         origin: BASE_URL,
-        credentials: true
+        //credentials: true
     }
 });
 const PORT = process.env.NODE_APP_PORT;
 const { addPlayer, game, removePlayer } = require('./handleGames');
-app.use(sessionMiddleware);
-app.use(cors({ origin: BASE_URL, credentials: true }));
+app.use(cors({ origin: BASE_URL, /*credentials: true*/ }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -58,7 +38,7 @@ app.post("/login", (req, res) => {
 
 app.post('/token', (req, res) => {
     const refreshToken = req.body.token
-    console.log(refreshToken);
+    //console.log(refreshToken);
     if (refreshToken == null) return res.status(200).json({ auth: false, message: 'Refresh token doesnt exist' });
     if (!refreshTokens.includes(refreshToken)) return res.status(200).json({ auth: false, message: 'Refresh token doesnt exist' });
     jwt.verify(refreshToken, process.env.NODE_APP_REFRESH_TOKEN_SECRET, (err, user) => {
@@ -69,7 +49,7 @@ app.post('/token', (req, res) => {
 })
 
 app.get("/session", authenticateToken, (req, res) => {
-    console.log(req.user);
+    //console.log(req.user);
     res.status(200).json({ auth: true, message: 'Session Exists', username: req.user.name });
 })
 
@@ -95,29 +75,16 @@ function authenticateToken(req, res, next) {
     })
 }
 
-// convert a connect middleware to a Socket.IO middleware
-const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
 
-io.use(wrap(sessionMiddleware));
 
-// only allow authenticated users
-io.use((socket, next) => {
-    const session = socket.request.session;
-    //console.log(session, session.authenticated)
-    if (session && session.authenticated) {
-        next();
-    } else {
-        next(new Error("unauthorized"));
-    }
-});
 io.on('connection', (socket) => {
     //console.log(socket.id);
     socket.on('join', ({ gameID }, callback) => {
-        let name = socket.request.session.user.name;
+        let name = 'socket.request.session.user.name';
         //console.log('hit')
         const { error, player, opponent } = addPlayer({
             name,
-            playerID: socket.request.session.id,
+            playerID: socket.id,
             gameID,
         });
         if (error) {
@@ -151,14 +118,14 @@ io.on('connection', (socket) => {
     });
 
     socket.on('disconnect', () => {
-        const player = removePlayer(socket.request.session.id);
+        const player = removePlayer(socket.id);
 
         if (player) {
             io.to(player.gameID).emit('message', {
                 message: `${player.name} has left the game.`,
             });
             //socket.broadcast.to(player.gameID).emit('opponentLeft');
-            console.log(`${player.name} has left the game ${player.gameID} sessionID ${socket.request.session.id}`);
+            console.log(`${player.name} has left the game ${player.gameID} sessionID ${socket.id}`);
         }
     });
 });
