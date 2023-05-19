@@ -7,7 +7,7 @@ export default function Login() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        let result = fetchGet('/session');
+        let result = fetchGet('/auth/session');
         result.then(res => {
             if (res.auth) {
                 navigate('/home');
@@ -17,9 +17,9 @@ export default function Login() {
 
     async function login(e) {
         e.preventDefault();
-        let result = await fetchPost('/login', { name });
+        let result = await fetchPost('/auth/guestlogin', { name });
         if (result.auth) {
-            console.log(result);
+            //console.log(result);
             window.localStorage.setItem('Token', result.accessToken);
             window.localStorage.setItem('RefreshToken', result.refreshToken);
             navigate('/home');

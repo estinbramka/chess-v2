@@ -39,20 +39,22 @@ export default function Chessboard({ gameID }) {
         function message({ message }) {
             console.log({ message });
         }
-        function connectError(message) {
-            setTimeout(async () => {
-                countConnections.current++;
-                if (countConnections.current > 2) {
-                    navigate('/home');
-                }
-                //console.log(countConnections.current);
+        async function connectError(message) {
+            //setTimeout(async () => {
+            countConnections.current++;
+            if (countConnections.current > 2) {
+                countConnections.current = 0;
+                navigate('/home');
+            } else {
                 let RTresult = await refreshToken()
                 if (RTresult.auth) {
                     window.localStorage.setItem('Token', RTresult.accessToken);
                 }
                 socket.auth.token = window.localStorage.getItem('Token');
                 socket.connect();
-            }, 1000);
+                console.log('try to connect');
+            }
+            //}, 100);
         }
 
         socket.on('welcome', welcome);

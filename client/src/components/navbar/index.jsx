@@ -6,7 +6,7 @@ export default function Navbar() {
 
     async function logout() {
         let refreshToken = window.localStorage.getItem('RefreshToken');
-        let result = await fetchPost('/logout', { token: refreshToken });
+        let result = await fetchPost('/auth/logout', { token: refreshToken });
         if (!result.auth) {
             window.localStorage.removeItem('Token');
             window.localStorage.removeItem('RefreshToken');

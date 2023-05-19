@@ -56,7 +56,7 @@ export async function refreshToken() {
     let baseurl = getBaseURL();
     let refreshToken = window.localStorage.getItem('RefreshToken');
     //let result = await fetchPost('/token', { token: refreshToken });
-    const response = await fetch(baseurl + '/token', {
+    const response = await fetch(baseurl + '/auth/token', {
         method: "POST",
         headers: {
             'Accept': 'application/json',
