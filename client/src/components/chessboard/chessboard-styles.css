@@ -1,22 +1,29 @@
-.chessboard{
+.chessboard {
     aspect-ratio: 1/1;
-    flex: 1 1 auto;
     background-image: url('../../assets/chessboard.png');
     background-size: 100% 100%;
     position: relative;
     border-radius: 3px;
 }
 
-.chessboard-sidebar{
+.chessboard-sidebar {
     flex: 0 0 40px;
 }
 
-.pov-button{
+.pov-button {
     width: 100%;
     aspect-ratio: 1/1;
 }
 
-.chessboard-layout{
+.chessboard-layout {
+    justify-content: center;
+    flex: 1 1 auto;
     display: flex;
-    width: 100vh;
+}
+
+@media (max-aspect-ratio: 1035/1019) {
+    .chessboard {
+        width: 100%;
+        margin-bottom: auto;
+    }
 }

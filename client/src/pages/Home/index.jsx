@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchGet } from "../../function/fetch";
+import Navbar from "../../components/navbar";
 
 export default function Home({ gameID, setGameID }) {
     const navigate = useNavigate();
@@ -26,6 +27,7 @@ export default function Home({ gameID, setGameID }) {
 
     return (
         <div>
+            <Navbar></Navbar>
             {name}
             <input type="text" value={gameID} onChange={(e) => setGameID(e.target.value)} />
             <button onClick={createGame}>create Game</button>
