@@ -7,7 +7,10 @@ export default function Game({ gameID }) {
     return (
         <div className='game'>
             <Navbar></Navbar>
-            <Chessboard gameID={gameID}></Chessboard>
+            <div className="main-layout">
+                <Chessboard gameID={gameID}></Chessboard>
+                <div className="main-sidebar">to do chat and move history</div>
+            </div>
         </div>
     );
 }

@@ -4,3 +4,21 @@
     display: flex;
     flex-direction: column;
 }
+
+.main-layout {
+    flex: 1 1 auto;
+    display: flex;
+}
+
+.main-sidebar {
+    margin: 10px;
+    border-radius: 0.5rem;
+    background-color: #e0e0e0;
+    flex: 1 1 auto;
+}
+
+@media (max-aspect-ratio: 4/3) {
+    .main-layout {
+        flex-direction: column;
+    }
+}

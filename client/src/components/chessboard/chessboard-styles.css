@@ -1,4 +1,6 @@
 .chessboard {
+    margin-bottom: auto;
+    width: 80vmin;
     aspect-ratio: 1/1;
     background-image: url('../../assets/chessboard.png');
     background-size: 100% 100%;
@@ -16,14 +18,16 @@
 }
 
 .chessboard-layout {
+    margin: auto;
+    margin-left: 45px;
     justify-content: center;
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     display: flex;
 }
 
-@media (max-aspect-ratio: 1035/1019) {
-    .chessboard {
-        width: 100%;
-        margin-bottom: auto;
+@media (max-aspect-ratio: 4/3) {
+    .chessboard-layout {
+        flex: 0 1 auto;
+        margin: 20px;
     }
 }
