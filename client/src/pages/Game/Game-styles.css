@@ -16,6 +16,13 @@
     flex: 1 1 auto;
 }
 
+.message{
+    align-self: center;
+    margin-top: 15vh;
+    font-weight: bold;
+    font-size: 2em;
+}
+
 @media (max-aspect-ratio: 4/3) {
     .main-layout {
         flex-direction: column;

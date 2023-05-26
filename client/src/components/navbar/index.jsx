@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { fetchPost } from "../../function/fetch";
+import "./navbar-styles.css"
 
 export default function Navbar() {
     const navigate = useNavigate();
@@ -16,7 +17,7 @@ export default function Navbar() {
     }
 
     return (
-        <div>
+        <div className="header">
             <Link to="/home">Home</Link>
             <button onClick={logout}>Logout</button>
         </div>

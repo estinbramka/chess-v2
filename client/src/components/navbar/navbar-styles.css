@@ -1,0 +1,4 @@
+.header{
+    height: var(--header-height);
+    box-shadow: 0 4px 6px -6px #222;
+}

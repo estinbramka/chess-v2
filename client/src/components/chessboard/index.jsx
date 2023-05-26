@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { refreshToken } from '../../function/fetch';
 
 const FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-export default function Chessboard({ gameID }) {
+export default function Chessboard({ game }) {
     const [fen, setFen] = useState(FEN);
     const { current: chess } = useRef(new Chess(fen));
     const [pov, setPov] = useState('white');
@@ -22,7 +22,7 @@ export default function Chessboard({ gameID }) {
     useEffect(() => {
         //console.log(name, gameID);
         socket.connect();
-        socket.emit('join', { gameID: gameID }, ({ error, color }) => {
+        socket.emit('join', { gameID: game.code }, ({ error, color }) => {
             console.log({ color, error });
         });
 
@@ -71,7 +71,7 @@ export default function Chessboard({ gameID }) {
             socket.off('connect_error', connectError);
             socket.disconnect();
         };
-    }, [chess, gameID, navigate]);
+    }, [chess, game, navigate]);
 
     function makeMove(from, to) {
         console.log(from, to);
@@ -81,7 +81,7 @@ export default function Chessboard({ gameID }) {
             //console.log(error);
             return 'error';
         }
-        socket.emit('move', { gameID: gameID, from, to });
+        socket.emit('move', { gameID: game.code, from, to });
         setFen(chess.fen());
         return 'success';
     }
