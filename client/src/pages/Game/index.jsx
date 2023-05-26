@@ -12,10 +12,13 @@ export default function Game() {
     //const game = await fetchGet(`/games/${code}`);
     useEffect(() => {
         if (code === undefined) {
-            navigate('/home')
+            navigate('/home');
         }
         async function fetchData() {
             const game = await fetchGet(`/games/${code}`);
+            if (game.auth === false) {
+                navigate('/home');
+            }
             setGame(game)
         }
         fetchData();
