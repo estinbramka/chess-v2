@@ -110,7 +110,7 @@ async function joinAsPlayer() {
 }
 
 async function sendMove(m) {
-    console.log(m);
+    //console.log(m);
     const game = activeGames.find((g) => g.code === Array.from(this.rooms)[1]);
     if (!game || game.endReason || game.winner) return;
     const chess = new Chess();
