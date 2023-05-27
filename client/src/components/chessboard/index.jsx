@@ -22,22 +22,22 @@ export default function Chessboard({ game }) {
     useEffect(() => {
         //console.log(name, gameID);
         socket.connect();
-        socket.emit('join', { gameID: game.code }, ({ error, color }) => {
-            console.log({ color, error });
-        });
+        socket.emit('joinLobby', game.code);
 
-        function welcome({ message, opponent }) {
-            console.log({ message, opponent });
+        function receivedLatestGame(game) {
+            console.log(game);
+            chess.loadPgn(game.pgn);
+            setFen(chess.fen());
         }
-        function opponentJoin({ message, opponent }) {
-            console.log({ message, opponent });
+        function userJoinedAsPlayer({ name, side }) {
+            console.log({ name, side });
         }
-        function opponentMove({ from, to }) {
+        function receivedMove({ from, to }) {
             chess.move({ from, to });
             setFen(chess.fen());
         }
         function message({ message }) {
-            console.log({ message });
+            console.log(message);
         }
         async function connectError(message) {
             //setTimeout(async () => {
@@ -57,23 +57,23 @@ export default function Chessboard({ game }) {
             //}, 100);
         }
 
-        socket.on('welcome', welcome);
-        socket.on('opponentJoin', opponentJoin);
-        socket.on('opponentMove', opponentMove);
+        socket.on('receivedLatestGame', receivedLatestGame);
+        socket.on('userJoinedAsPlayer', userJoinedAsPlayer);
+        socket.on('receivedMove', receivedMove);
         socket.on('message', message);
         socket.on('connect_error', connectError);
 
         return () => {
-            socket.off('welcome', welcome);
-            socket.off('opponentJoin', opponentJoin);
-            socket.off('opponentMove', opponentMove);
+            socket.off('receivedLatestGame', receivedLatestGame);
+            socket.off('userJoinedAsPlayer', userJoinedAsPlayer);
+            socket.off('receivedMove', receivedMove);
             socket.off('message', message);
             socket.off('connect_error', connectError);
             socket.disconnect();
         };
     }, [chess, game, navigate]);
 
-    function makeMove(from, to) {
+    function makeMove(from, to, promotion) {
         console.log(from, to);
         try {
             chess.move({ from, to });
@@ -81,8 +81,8 @@ export default function Chessboard({ game }) {
             //console.log(error);
             return 'error';
         }
-        socket.emit('move', { gameID: game.code, from, to });
         setFen(chess.fen());
+        socket.emit('sendMove', { from, to, promotion });
         return 'success';
     }
 

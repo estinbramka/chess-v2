@@ -23,7 +23,7 @@ export default function Home() {
         e.preventDefault();
         const startingSide = e.target.elements.namedItem("createStartingSide").value;
         let game = await fetchPost('/games/', { startingSide });
-        console.log(game);
+        //console.log(game);
         if(game){
             navigate(`/${game.code}`);
         }

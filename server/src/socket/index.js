@@ -3,9 +3,9 @@ const { joinLobby, sendMove, leaveLobby } = require('./game.socket');
 
 function socketConnect(socket) {
     //console.log(socket.user);
-    socket.on('join', joinLobby);
+    socket.on('joinLobby', joinLobby);
 
-    socket.on('move', sendMove);
+    socket.on('sendMove', sendMove);
 
     socket.on('disconnect', leaveLobby);
 };
