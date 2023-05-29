@@ -23,6 +23,7 @@ export default function Chessboard({ game }) {
         //console.log(name, gameID);
         socket.connect();
         socket.emit('joinLobby', game.code);
+        console.log('join');
 
         function receivedLatestGame(game) {
             console.log(game);
@@ -70,8 +71,9 @@ export default function Chessboard({ game }) {
             socket.off('message', message);
             socket.off('connect_error', connectError);
             socket.disconnect();
+            console.log('disconect');
         };
-    }, [chess, game, navigate]);
+    }, [chess, game.code, navigate]);
 
     function makeMove(from, to, promotion) {
         console.log(from, to);

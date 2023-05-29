@@ -10,6 +10,7 @@ async function joinLobby(gameCode) {
 
     if (game.host && game.host?.id === this.user.id) {
         game.host.connected = true;
+        console.log('join lobby connected true',this.id);
         if (game.host.name !== this.user.name) {
             game.host.name = this.user.name;
         }
@@ -55,19 +56,6 @@ async function joinLobby(gameCode) {
     io.to(game.code).emit('message', {
         message: `Hello ${this.user.name}, Welcome to the game`,
     });
-
-    // Tell player2 that player1 has joined the game.
-    /*this.broadcast.to(gameCode).emit('opponentJoin', {
-        message: `${game} has joined the game. `,
-        game,
-    });*/
-
-    /*if (game(gameID).length >= 2) {
-        const white = game(gameID).find((player) => player.color === 'w');
-        io.to(gameID).emit('message', {
-            message: `Let's start the game. White (${white.name}) goes first`,
-        });
-    }*/
 }
 
 async function joinAsPlayer() {
@@ -172,16 +160,55 @@ async function sendMove(m) {
     }
 }
 
-function leaveLobby() {
-    const player = removePlayer(this.id);
-
-    if (player) {
-        io.to(player.gameID).emit('message', {
-            message: `${player.name} has left the game.`,
-        });
-        //this.broadcast.to(player.gameID).emit('opponentLeft');
-        console.log(`${player.name} has left the game ${player.gameID} sessionID ${this.id}`);
+async function leaveLobby(reason, code) {
+    if (this.rooms.size >= 3 && !code) {
+        console.log(`leaveLobby: room size is ${this.rooms.size}, aborting...`);
+        return;
     }
+    const game = activeGames.find(
+        (g) =>
+            g.code === (code || this.rooms.size === 2 ? Array.from(this.rooms)[1] : 0) ||
+            (g.black?.connected && g.black?.id === this.user.id) ||
+            (g.white?.connected && g.white?.id === this.user.id) ||
+            g.observers?.find((o) => this.user.id === o.id)
+    );
+
+    if (game) {
+        const user = game.observers?.find((o) => o.id === this.user.id);
+        if (user) {
+            game.observers?.splice(game.observers?.indexOf(user), 1);
+        }
+        if (game.black && game.black?.id === this.user.id) {
+            game.black.connected = false;
+            game.black.disconnectedOn = Date.now();
+        } else if (game.white && game.white?.id === this.user.id) {
+            game.white.connected = false;
+            game.white.disconnectedOn = Date.now();
+        }
+        console.log('disconnect lobby connected false');
+
+        // count sockets
+        const sockets = await io.in(game.code).fetchSockets();
+
+        if (sockets.length <= 0 || (reason === undefined && sockets.length <= 1)) {
+            if (game.timeout) clearTimeout(game.timeout);
+
+            let timeout = 1000 * 60; // 1 minute
+            if (game.pgn) {
+                timeout *= 0; // 20 minutes if game has started
+            }
+            game.timeout = Number(
+                setTimeout(() => {
+                    console.log('delete active game');
+                    activeGames.splice(activeGames.indexOf(game), 1);
+                }, timeout)
+            );
+        } else {
+            this.to(game.code).emit("receivedLatestGame", game);
+        }
+    }
+    await this.leave(code || Array.from(this.rooms)[1]);
+    //console.log('leave lobby', this.user.id);
 }
 
 module.exports = {
