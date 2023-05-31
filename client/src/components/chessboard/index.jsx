@@ -7,25 +7,29 @@ import { socket } from '../../socket';
 import { useNavigate } from 'react-router-dom';
 import { refreshToken } from '../../function/fetch';
 
-const FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+//const FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 export default function Chessboard({ game, user, setGame }) {
-    const [fen, setFen] = useState(FEN);
-    const { current: chess } = useRef(new Chess(fen));
-    const [pov, setPov] = useState('white');
-    const [board, setBoard] = useState(createBoard('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', pov))
+    const { current: chess } = useRef(new Chess());
+    const [fen, setFen] = useState(() => {
+        chess.loadPgn(game.pgn);
+        return chess.fen();
+    });
+    const [pov, setPov] = useState(() => {
+        if (game.black && game.black?.id === user.id) {
+            return 'black';
+        } else if (game.white && game.white?.id === user.id) {
+            return 'white';
+        }else{
+            return 'white';
+        }
+    });
+    const [board, setBoard] = useState(createBoard(fen, pov))
     const navigate = useNavigate();
     const countConnections = useRef(0);
     useEffect(() => {
         chess.loadPgn(game.pgn);
         setFen(chess.fen());
     }, [game, chess])
-    useEffect(() => {
-        if (game.black && game.black?.id === user.id) {
-            setPov('black');
-        } else if (game.white && game.white?.id === user.id) {
-            setPov('white');
-        }
-    }, [])
     useEffect(() => {
         setBoard(createBoard(fen, pov));
     }, [fen, pov])
