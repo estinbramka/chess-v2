@@ -14,7 +14,7 @@ export default function Home() {
             if (!res.auth) {
                 navigate('/login')
             } else {
-                setName(res.username);
+                setName(res.user.name);
             }
         })
     }, [navigate])

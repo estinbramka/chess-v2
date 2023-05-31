@@ -8,13 +8,24 @@ import { useNavigate } from 'react-router-dom';
 import { refreshToken } from '../../function/fetch';
 
 const FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-export default function Chessboard({ game }) {
+export default function Chessboard({ game, user, setGame }) {
     const [fen, setFen] = useState(FEN);
     const { current: chess } = useRef(new Chess(fen));
     const [pov, setPov] = useState('white');
     const [board, setBoard] = useState(createBoard('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', pov))
     const navigate = useNavigate();
     const countConnections = useRef(0);
+    useEffect(() => {
+        chess.loadPgn(game.pgn);
+        setFen(chess.fen());
+    }, [game, chess])
+    useEffect(() => {
+        if (game.black && game.black?.id === user.id) {
+            setPov('black');
+        } else if (game.white && game.white?.id === user.id) {
+            setPov('white');
+        }
+    }, [])
     useEffect(() => {
         setBoard(createBoard(fen, pov));
     }, [fen, pov])
@@ -24,16 +35,17 @@ export default function Chessboard({ game }) {
         socket.connect();
         socket.on("connect", connect);
         //socket.emit('joinLobby', game.code);
-        //console.log('join');
+        //console.log(user);
 
-        function connect(){
+        function connect() {
             socket.emit('joinLobby', game.code);
             //console.log('join');
         }
         function receivedLatestGame(game) {
             console.log(game);
-            chess.loadPgn(game.pgn);
-            setFen(chess.fen());
+            setGame(game);
+            //chess.loadPgn(game.pgn);
+            //setFen(chess.fen());
         }
         function userJoinedAsPlayer({ name, side }) {
             console.log({ name, side });
@@ -79,7 +91,7 @@ export default function Chessboard({ game }) {
             socket.disconnect();
             //console.log('disconnect');
         };
-    }, [chess, game.code, navigate]);
+    }, [chess, game.code, navigate, setGame]);
 
     function makeMove(from, to, promotion) {
         console.log(from, to);

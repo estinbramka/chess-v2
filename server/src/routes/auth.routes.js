@@ -29,7 +29,7 @@ router.post('/token', (req, res) => {
 })
 
 router.get("/session", authenticateToken, (req, res) => {
-    res.status(200).json({ auth: true, message: 'Session Exists', username: req.user.name });
+    res.status(200).json({ auth: true, message: 'Session Exists', user: req.user });
 })
 
 router.post("/logout", (req, res) => {
