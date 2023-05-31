@@ -22,9 +22,14 @@ export default function Chessboard({ game }) {
     useEffect(() => {
         //console.log(name, gameID);
         socket.connect();
-        socket.emit('joinLobby', game.code);
-        console.log('join');
+        socket.on("connect", connect);
+        //socket.emit('joinLobby', game.code);
+        //console.log('join');
 
+        function connect(){
+            socket.emit('joinLobby', game.code);
+            //console.log('join');
+        }
         function receivedLatestGame(game) {
             console.log(game);
             chess.loadPgn(game.pgn);
@@ -65,13 +70,14 @@ export default function Chessboard({ game }) {
         socket.on('connect_error', connectError);
 
         return () => {
+            socket.off("connect", connect);
             socket.off('receivedLatestGame', receivedLatestGame);
             socket.off('userJoinedAsPlayer', userJoinedAsPlayer);
             socket.off('receivedMove', receivedMove);
             socket.off('message', message);
             socket.off('connect_error', connectError);
             socket.disconnect();
-            console.log('disconect');
+            //console.log('disconnect');
         };
     }, [chess, game.code, navigate]);
 

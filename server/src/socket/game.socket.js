@@ -10,7 +10,6 @@ async function joinLobby(gameCode) {
 
     if (game.host && game.host?.id === this.user.id) {
         game.host.connected = true;
-        console.log('join lobby connected true',this.id);
         if (game.host.name !== this.user.name) {
             game.host.name = this.user.name;
         }
@@ -185,7 +184,6 @@ async function leaveLobby(reason, code) {
             game.white.connected = false;
             game.white.disconnectedOn = Date.now();
         }
-        console.log('disconnect lobby connected false');
 
         // count sockets
         const sockets = await io.in(game.code).fetchSockets();
@@ -195,11 +193,11 @@ async function leaveLobby(reason, code) {
 
             let timeout = 1000 * 60; // 1 minute
             if (game.pgn) {
-                timeout *= 0; // 20 minutes if game has started
+                timeout *= 20; // 20 minutes if game has started
             }
             game.timeout = Number(
                 setTimeout(() => {
-                    console.log('delete active game');
+                    //console.log('delete active game');
                     activeGames.splice(activeGames.indexOf(game), 1);
                 }, timeout)
             );
