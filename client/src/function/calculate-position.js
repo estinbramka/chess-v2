@@ -70,7 +70,17 @@ export function calculateMove(pieceElm, piece, parent, xClient, yClient, pov, ma
     let yPrev = parseInt(Array.from(piece.pos)[1]);
     let from = xAxis[xPrev - 1] + yAxis[yPrev - 1];
     let to = xAxis[x - 1] + yAxis[y - 1];
-    let status = makeMove(from, to);
+    console.log(piece.piece, from, to);
+    let status;
+    if (piece.piece === 'wp' && yAxis[y - 1] === 8) {
+        console.log('white promotion');
+        status = makeMove(from, to, 'q');
+    } else if (piece.piece === 'bp' && yAxis[y - 1] === 1) {
+        console.log('black promotion');
+        status = makeMove(from, to, 'q');
+    } else {
+        status = makeMove(from, to);
+    }
     if (status === 'error') {
         pieceElm.removeAttribute("style");
     }
