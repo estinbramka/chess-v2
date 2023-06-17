@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import './piece-styles.css'
 import { setPiecePos, calculateMove } from '../../function/calculate-position';
 
-export default function Piece({ piece, parent, pov, makeMove }) {
+export default function Piece({ piece, parent, pov, makeMove, calculatePossibleMoves }) {
     const pieceElm = useRef();
 
     function dragMouseDown(e) {
@@ -11,6 +11,16 @@ export default function Piece({ piece, parent, pov, makeMove }) {
         document.onmouseup = closeDragElement;
         document.onmousemove = elementDrag;
 
+        let yAxis = Array.from({ length: 8 }, (_, i) => (i + 1));
+        let xAxis = Array.from('abcdefgh');
+        if (pov === 'black') {
+            yAxis = yAxis.reverse();
+            xAxis = xAxis.reverse();
+        }
+        let xPrev = parseInt(Array.from(piece.pos)[0]);
+        let yPrev = parseInt(Array.from(piece.pos)[1]);
+        let from = xAxis[xPrev - 1] + yAxis[yPrev - 1];
+        calculatePossibleMoves(from);
         setPiecePos(pieceElm.current, parent.current, e.clientX, e.clientY);
     }
 
