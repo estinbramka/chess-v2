@@ -1,4 +1,4 @@
-.overlay{
+.overlay {
     position: absolute;
     left: 0;
     right: 0;
@@ -6,4 +6,66 @@
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.3);
     z-index: 1;
+    display: flex;
+    align-items: center;
+}
+
+.hidden{
+    display: none;
+}
+
+.promotion-select {
+    width: 100%;
+    height: 25%;
+    background-color: rgba(238, 238, 210, 0.8);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.promotion-piece{
+    aspect-ratio: 1;
+    height: 70%;
+}
+
+.promotion-piece:hover{
+    background-color: aliceblue;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.promotion-piece.br{
+    background-image: url('../../assets/pieces/br.png');
+    background-size: 100% 100%;
+}
+.promotion-piece.bn{
+    background-image: url('../../assets/pieces/bn.png');
+    background-size: 100% 100%;
+}
+.promotion-piece.bb{
+    background-image: url('../../assets/pieces/bb.png');
+    background-size: 100% 100%;
+}
+
+.promotion-piece.bq{
+    background-image: url('../../assets/pieces/bq.png');
+    background-size: 100% 100%;
+}
+
+.promotion-piece.wr{
+    background-image: url('../../assets/pieces/wr.png');
+    background-size: 100% 100%;
+}
+.promotion-piece.wn{
+    background-image: url('../../assets/pieces/wn.png');
+    background-size: 100% 100%;
+}
+.promotion-piece.wb{
+    background-image: url('../../assets/pieces/wb.png');
+    background-size: 100% 100%;
+}
+
+.promotion-piece.wq{
+    background-image: url('../../assets/pieces/wq.png');
+    background-size: 100% 100%;
 }

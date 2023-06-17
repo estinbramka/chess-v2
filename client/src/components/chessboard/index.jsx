@@ -98,16 +98,25 @@ export default function Chessboard({ game, user, setGame }) {
         };
     }, [chess, game.code, navigate, setGame]);
 
-    function makeMove(from, to, promotion) {
+    function makeMove(from, to, piece, pieceElm) {
         console.log(from, to);
         try {
-            chess.move({ from, to, promotion });
+            if (piece.piece === 'wp' && to[1] === '8') {
+                console.log('white promotion');
+                chess.move({ from, to, promotion: 'q' });
+            } else if (piece.piece === 'bp' && to[1] === '1') {
+                console.log('black promotion');
+                chess.move({ from, to, promotion: 'q' });
+            } else {
+                chess.move({ from, to });
+            }
+            //chess.move({ from, to, promotion });
         } catch (error) {
-            //console.log(error);
-            return 'error';
+            pieceElm.removeAttribute("style");
+            return;
         }
         setFen(chess.fen());
-        socket.emit('sendMove', { from, to, promotion });
+        socket.emit('sendMove', { from, to, promotion: 'q' });
         return 'success';
     }
 
