@@ -27,6 +27,7 @@ export default function Chessboard({ game, user, setGame }) {
     const [board, setBoard] = useState(createBoard(fen, pov))
     const [promotionPromise, setPromotionPromise] = useState();
     const [promotionHidden, setPromotionHidden] = useState(true);
+    const [promotionColor, setPromotionColor] = useState();
     const navigate = useNavigate();
     const countConnections = useRef(0);
     useEffect(() => {
@@ -101,18 +102,25 @@ export default function Chessboard({ game, user, setGame }) {
     }, [chess, game.code, navigate, setGame]);
 
     async function makeMove(from, to, piece, pieceElm) {
-        console.log(from, to);
+        console.log(from, to, chess.moves({ square: from, verbose: true }).filter(x => x.to === to).length > 0);
+        let promotion;
         try {
-            if (piece.piece === 'wp' && to[1] === '8') {
-                console.log('white promotion');
+            if (piece.piece === 'wp' && to[1] === '8' && chess.moves({ square: from, verbose: true }).filter(x => x.to === to).length > 0) {
+                //console.log('white promotion');
+                setPromotionColor('white');
                 setPromotionHidden(false);
-                let promotion = await promotionPromise;
+                promotion = await promotionPromise;
                 setPromotionHidden(true);
                 console.log(promotion);
-                chess.move({ from, to, promotion: 'q' });
-            } else if (piece.piece === 'bp' && to[1] === '1') {
-                console.log('black promotion');
-                chess.move({ from, to, promotion: 'q' });
+                chess.move({ from, to, promotion });
+            } else if (piece.piece === 'bp' && to[1] === '1' && chess.moves({ square: from, verbose: true }).filter(x => x.to === to).length > 0) {
+                //console.log('black promotion');
+                setPromotionColor('black');
+                setPromotionHidden(false);
+                promotion = await promotionPromise;
+                setPromotionHidden(true);
+                console.log(promotion);
+                chess.move({ from, to, promotion });
             } else {
                 chess.move({ from, to });
             }
@@ -122,14 +130,14 @@ export default function Chessboard({ game, user, setGame }) {
             return;
         }
         setFen(chess.fen());
-        socket.emit('sendMove', { from, to, promotion: 'q' });
+        socket.emit('sendMove', { from, to, promotion });
         return 'success';
     }
 
     return (
         <div className='chessboard-layout'>
             <div className="chessboard" ref={boardElm}>
-                <Promotion promotionHidden={promotionHidden} setPromotionPromise={setPromotionPromise} ></Promotion>
+                <Promotion promotionHidden={promotionHidden} setPromotionPromise={setPromotionPromise} promotionColor={promotionColor} ></Promotion>
                 {board
                     .filter((piece) => (piece.piece !== ''))
                     .map((piece) => (<Piece key={piece.pos} piece={piece} parent={boardElm} pov={pov} makeMove={makeMove}></Piece>))
