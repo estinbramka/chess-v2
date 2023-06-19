@@ -48,7 +48,7 @@
     background-clip: content-box;
     border-radius: 50%;
     box-sizing: border-box;
-    pointer-events: none;
+    /*pointer-events: none;*/
     border-width: 6.1px;
     border: 5px solid rgba(0,0,0,.2);
 }
