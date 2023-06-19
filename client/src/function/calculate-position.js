@@ -29,7 +29,7 @@ function getPosRelativetoParentinPer(parent, xClient, yClient) {
     return { x: xPer, y: yPer };
 }
 
-function getIndexPos(parent, xClient, yClient) {
+export function getIndexPos(parent, xClient, yClient) {
     let pos = getPosRelativetoParentinPer(parent, xClient, yClient)
     let x = pos.x;
     let y = pos.y;

@@ -24,20 +24,6 @@
     display: flex;
 }
 
-.hint{
-    width: calc(100%/8);
-    height: calc(100%/8);
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: rgba(0, 0, 0, 0.3);
-    background-clip: content-box;
-    border-radius: 50%;
-    box-sizing: border-box;
-    pointer-events: none;
-    padding: 4.2%;
-}
-
 @media (max-aspect-ratio: 4/3) {
     .chessboard {
         width: calc(100vmin - 40px - 20px);

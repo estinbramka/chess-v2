@@ -30,7 +30,6 @@ export default function Chessboard({ game, user, setGame }) {
     const [promotionColor, setPromotionColor] = useState();
     const navigate = useNavigate();
     const countConnections = useRef(0);
-    const [possibleMoves, setPossibleMoves] = useState([]);
     useEffect(() => {
         chess.loadPgn(game.pgn);
         setFen(chess.fen());
@@ -142,33 +141,14 @@ export default function Chessboard({ game, user, setGame }) {
         return 'success';
     }
 
-    function calculatePossibleMoves(from) {
-        let pm = chess.moves({ square: from, verbose: true }).map(x => x.to);
-        pm = [...new Set(pm)];
-        let yAxis = Array.from({ length: 8 }, (_, i) => (i + 1));
-        let xAxis = Array.from('abcdefgh');
-        if (pov === 'black') {
-            yAxis = yAxis.reverse();
-            xAxis = xAxis.reverse();
-        }
-        for (let i = 0; i < pm.length; i++) {
-            let x = xAxis.indexOf(pm[i][0]) + 1;
-            let y = yAxis.indexOf(parseInt(pm[i][1])) + 1;
-            pm[i] = 'square-' + x + y;
-        }
-        setPossibleMoves(pm);
-        console.log(pm);
-    }
-
     return (
         <div className='chessboard-layout'>
             <div className="chessboard" ref={boardElm}>
                 <Promotion promotionHidden={promotionHidden} setPromotionPromise={setPromotionPromise} promotionColor={promotionColor} ></Promotion>
                 {board
                     .filter((piece) => (piece.piece !== ''))
-                    .map((piece) => (<Piece key={piece.pos} piece={piece} parent={boardElm} pov={pov} makeMove={makeMove} calculatePossibleMoves={calculatePossibleMoves}></Piece>))
+                    .map((piece) => (<Piece key={piece.pos} piece={piece} parent={boardElm} pov={pov} makeMove={makeMove} chess={chess} user={user} game={game}></Piece>))
                 }
-                {possibleMoves.map(pm => (<div className={pm+" hint"}></div>))}
             </div>
             <div className='chessboard-sidebar'>
                 <button className='pov-button' onClick={() => pov === 'white' ? setPov('black') : setPov('white')}>Pov</button>
