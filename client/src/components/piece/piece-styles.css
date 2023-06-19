@@ -35,8 +35,8 @@
     background-clip: content-box;
     border-radius: 50%;
     box-sizing: border-box;
-    /*pointer-events: none;*/
     padding: 4.2%;
+    z-index: 1;
 }
 
 .capture-hint{
@@ -48,9 +48,9 @@
     background-clip: content-box;
     border-radius: 50%;
     box-sizing: border-box;
-    /*pointer-events: none;*/
     border-width: 6.1px;
     border: 5px solid rgba(0,0,0,.2);
+    z-index: 1;
 }
 
 .piece.wp{
