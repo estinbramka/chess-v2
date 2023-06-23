@@ -29,3 +29,13 @@
         width: calc(100vmin - 40px - 20px);
     }
 }
+
+.block-input{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    border: dashed yellow;
+    z-index: 3;
+}

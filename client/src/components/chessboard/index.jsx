@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { refreshToken } from '../../function/fetch';
 
 //const FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-export default function Chessboard({ game, user, setGame }) {
+export default function Chessboard({ game, user, setGame, historyIndex }) {
     const { current: chess } = useRef(new Chess());
     const [fen, setFen] = useState(() => {
         chess.loadPgn(game.pgn);
@@ -32,8 +32,21 @@ export default function Chessboard({ game, user, setGame }) {
     const countConnections = useRef(0);
     useEffect(() => {
         chess.loadPgn(game.pgn);
-        setFen(chess.fen());
-    }, [game, chess])
+        if (historyIndex === null) {
+            setFen(chess.fen());
+            setPov(() => {
+                if (game.black && game.black?.id === user.id) {
+                    return 'black';
+                } else if (game.white && game.white?.id === user.id) {
+                    return 'white';
+                } else {
+                    return 'white';
+                }
+            });
+        } else {
+            setFen(chess.history({ verbose: true })[historyIndex]?.after || '');
+        }
+    }, [game, chess, historyIndex, user])
     useEffect(() => {
         setBoard(createBoard(fen, pov));
     }, [fen, pov])
@@ -60,7 +73,9 @@ export default function Chessboard({ game, user, setGame }) {
         }
         function receivedMove({ from, to, promotion }) {
             chess.move({ from, to, promotion });
-            setFen(chess.fen());
+            //setFen(chess.fen());
+            console.log(game)
+            setGame({ ...game, pgn: chess.pgn() });
         }
         function message({ message }) {
             console.log(message);
@@ -82,12 +97,16 @@ export default function Chessboard({ game, user, setGame }) {
             }
             //}, 100);
         }
+        function gameOver(gameover){
+            console.log(gameover);
+        }
 
         socket.on('receivedLatestGame', receivedLatestGame);
         socket.on('userJoinedAsPlayer', userJoinedAsPlayer);
         socket.on('receivedMove', receivedMove);
         socket.on('message', message);
         socket.on('connect_error', connectError);
+        socket.on('gameOver', gameOver);
 
         return () => {
             socket.off("connect", connect);
@@ -96,13 +115,15 @@ export default function Chessboard({ game, user, setGame }) {
             socket.off('receivedMove', receivedMove);
             socket.off('message', message);
             socket.off('connect_error', connectError);
+            socket.off('gameOver', gameOver);
             socket.disconnect();
             //console.log('disconnect');
         };
-    }, [chess, game.code, navigate, setGame]);
+        // eslint-disable-next-line
+    }, [chess, game.code, navigate, setGame]);//chess, game.code, navigate, setGame
 
     async function makeMove(from, to, piece, pieceElm) {
-        console.log(from, to, chess.moves({ square: from, verbose: true }).filter(x => x.to === to).length > 0, chess.turn());
+        //console.log(from, to, chess.moves({ square: from, verbose: true }).filter(x => x.to === to).length > 0, chess.turn());
         let promotion;
         try {
             const prevTurn = chess.turn();
@@ -136,7 +157,8 @@ export default function Chessboard({ game, user, setGame }) {
             pieceElm.removeAttribute("style");
             return;
         }
-        setFen(chess.fen());
+        //setFen(chess.fen());
+        setGame({ ...game, pgn: chess.pgn() });
         socket.emit('sendMove', { from, to, promotion });
         return 'success';
     }
@@ -145,6 +167,7 @@ export default function Chessboard({ game, user, setGame }) {
         <div className='chessboard-layout'>
             <div className="chessboard" ref={boardElm}>
                 <Promotion promotionHidden={promotionHidden} setPromotionPromise={setPromotionPromise} promotionColor={promotionColor} ></Promotion>
+                <div className={`block-input ${historyIndex !== chess.history().length - 1 && historyIndex !== null ? '' : 'hidden'}`}></div>
                 {board
                     .filter((piece) => (piece.piece !== ''))
                     .map((piece) => (<Piece key={piece.pos} piece={piece} parent={boardElm} pov={pov} makeMove={makeMove} chess={chess} user={user} game={game}></Piece>))

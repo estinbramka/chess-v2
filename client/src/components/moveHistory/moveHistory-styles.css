@@ -1,0 +1,33 @@
+.history-moves{
+    padding-left: 40px;
+    margin: 10px;
+    background-color: #f6f6f6;
+    overflow: auto;
+    flex: 1 1 200px;
+}
+
+.whole-move {
+    display: flex;
+    gap:10px;
+    margin:10px;
+}
+
+.move{
+    width: 50px;
+    cursor: pointer;
+}
+
+.selected, .move:hover{
+    background-color: #c0c0c0;
+    border-radius: 5px;
+}
+
+.history-buttons{
+    display: flex;
+    justify-content: center;
+    gap:10px
+}
+
+.history-button{
+    font-size: 1.5em;
+}
