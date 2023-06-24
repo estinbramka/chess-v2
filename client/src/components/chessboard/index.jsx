@@ -75,7 +75,7 @@ export default function Chessboard({ game, user, setGame, historyIndex }) {
             chess.move({ from, to, promotion });
             //setFen(chess.fen());
             console.log(game)
-            setGame({ ...game, pgn: chess.pgn() });
+            setGame((game) => ({ ...game, pgn: chess.pgn() }));
         }
         function message({ message }) {
             console.log(message);
@@ -97,7 +97,8 @@ export default function Chessboard({ game, user, setGame, historyIndex }) {
             }
             //}, 100);
         }
-        function gameOver(gameover){
+        function gameOver(gameover) {
+            alert('gameover');
             console.log(gameover);
         }
 
@@ -158,7 +159,8 @@ export default function Chessboard({ game, user, setGame, historyIndex }) {
             return;
         }
         //setFen(chess.fen());
-        setGame({ ...game, pgn: chess.pgn() });
+        //setGame({ ...game, pgn: chess.pgn() });
+        setGame((game) => ({ ...game, pgn: chess.pgn() }));
         socket.emit('sendMove', { from, to, promotion });
         return 'success';
     }
