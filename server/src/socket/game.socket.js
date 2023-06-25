@@ -144,8 +144,10 @@ async function sendMove(m) {
                 game.endReason = reason;
 
                 //const { id } = (await GameModel.save(game)); // save game to db
-                game.id = id;
-                io.to(game.code).emit("gameOver", { reason, winnerName, winnerSide, id });
+                //game.id = id;
+                
+                //io.to(game.code).emit("gameOver", { reason, winnerName, winnerSide, id });
+                io.to(game.code).emit("gameOver", { reason, winnerName, winnerSide });
 
                 if (game.timeout) clearTimeout(game.timeout);
                 activeGames.splice(activeGames.indexOf(game), 1);
