@@ -20,6 +20,10 @@ export default function Chessboard({ game, user, setGame, historyIndex }) {
             return 'black';
         } else if (game.white && game.white?.id === user.id) {
             return 'white';
+        } else if (game.white === undefined) {
+            return 'white';
+        } else if (game.black === undefined) {
+            return 'black';
         } else {
             return 'white';
         }
@@ -34,15 +38,6 @@ export default function Chessboard({ game, user, setGame, historyIndex }) {
         chess.loadPgn(game.pgn);
         if (historyIndex === null) {
             setFen(chess.fen());
-            setPov(() => {
-                if (game.black && game.black?.id === user.id) {
-                    return 'black';
-                } else if (game.white && game.white?.id === user.id) {
-                    return 'white';
-                } else {
-                    return 'white';
-                }
-            });
         } else {
             setFen(chess.history({ verbose: true })[historyIndex]?.after || '');
         }

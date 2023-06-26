@@ -14,7 +14,18 @@ export default function Game() {
     const [user, setUser] = useState();
     const [historyIndex, setHistoryIndex] = useState(null);
     const { code } = useParams();
-    //const game = await fetchGet(`/games/${code}`);
+    useEffect(() => {
+        function handlePopstate() {
+            console.log('url changed');
+            window.location.reload();
+        }
+
+        window.addEventListener("popstate", handlePopstate);
+
+        return () => {
+            window.removeEventListener('popstate', handlePopstate);
+        };
+    }, []);
     useEffect(() => {
         if (code === undefined) {
             navigate('/home');
