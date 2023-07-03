@@ -1,18 +1,19 @@
+import './chessHeader-styles.css'
 
 export default function ChessHeader({ game }) {
     //console.log(game);
     function isConnected(color) {
         if (game[color]?.connected === true) {
-            return (<div>connected</div>);
+            return (<div>Connected</div>);
         } else if (game[color]?.connected === false) {
-            return (<div>disconnected</div>);
+            return (<div>Disconnected</div>);
         } else {
-            return (<div>Unknown</div>);
+            return (<div>Disconnected</div>);
         }
     }
     return (
-        <div>
-            <div>
+        <div className='players-header'>
+            <div className='player-status'>
                 <div>
                     {
                         game.white ?
@@ -23,7 +24,8 @@ export default function ChessHeader({ game }) {
                 <div>(white)</div>
                 {isConnected('white')}
             </div>
-            <div>
+            VS
+            <div className='player-status'>
                 <div>
                     {
                         game.black ?

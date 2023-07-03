@@ -1,0 +1,14 @@
+.welcome-message{
+    display: flex;
+    justify-content: center;
+}
+#createStartingSide{
+    font-size: 2em;
+}
+.create-button{
+    font-size: 2em;
+}
+.form-create{
+    display: flex;
+    justify-content: center;
+}

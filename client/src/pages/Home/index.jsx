@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchGet, fetchPost } from "../../function/fetch";
 import Navbar from "../../components/navbar";
+import './Home-styles.css'
 
 export default function Home() {
     const navigate = useNavigate();
@@ -32,14 +33,14 @@ export default function Home() {
     return (
         <div>
             <Navbar></Navbar>
-            {name}
-            <form onSubmit={createGame}>
+            <h1 className="welcome-message">Welcome {name}</h1>
+            <form onSubmit={createGame} className="form-create">
                 <select name="createStartingSide" id="createStartingSide">
                     <option value="random">Random</option>
                     <option value="white">White</option>
                     <option value="black">Black</option>
                 </select>
-                <button type="submit">Create</button>
+                <button type="submit" className="create-button">Create Game</button>
             </form>
         </div>
     )

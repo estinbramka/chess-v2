@@ -1,4 +1,17 @@
 .header{
     height: var(--header-height);
     box-shadow: 0 4px 6px -6px #222;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.home-link{
+    margin-left: 20px;
+    font-size: 1.5em;
+}
+
+.logout-button{
+    font-size: 1.5em;
+    margin-right: 20px;
 }

@@ -92,9 +92,9 @@ export default function Chessboard({ game, user, setGame, historyIndex }) {
             }
             //}, 100);
         }
-        function gameOver(gameover) {
-            alert('gameover');
-            console.log(gameover);
+        function gameOver({ reason, winnerName, winnerSide }) {
+            alert(reason, winnerName, winnerSide);
+            //console.log(reason, winnerName, winnerSide);
         }
 
         socket.on('receivedLatestGame', receivedLatestGame);

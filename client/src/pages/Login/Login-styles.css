@@ -1,0 +1,15 @@
+.login-form{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 30px;
+}
+.login-form>input{
+    font-size: 2em;
+    width: 250px;
+}
+.login-form>button{
+    font-size: 2em;
+}

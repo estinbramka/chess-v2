@@ -18,8 +18,8 @@ export default function Navbar() {
 
     return (
         <div className="header">
-            <Link to="/home">Home</Link>
-            <button onClick={logout}>Logout</button>
+            <Link to="/home" className="home-link">Home</Link>
+            <button onClick={logout} className="logout-button">Logout</button>
         </div>
     );
 }

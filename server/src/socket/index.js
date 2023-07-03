@@ -1,5 +1,5 @@
 const { io } = require('../server');
-const { joinLobby, sendMove, leaveLobby } = require('./game.socket');
+const { joinLobby, sendMove, leaveLobby, chat } = require('./game.socket');
 
 function socketConnect(socket) {
     //console.log(socket.user);
@@ -8,6 +8,8 @@ function socketConnect(socket) {
     socket.on('sendMove', sendMove);
 
     socket.on('disconnect', leaveLobby);
+
+    socket.on("chat", chat);
 };
 
 function initSocket() {

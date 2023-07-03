@@ -54,7 +54,7 @@ export default function Game() {
                             <div className="main-sidebar">
                                 <ChessHeader game={game}></ChessHeader>
                                 <MoveHistory game={game} historyIndex={historyIndex} setHistoryIndex={setHistoryIndex}></MoveHistory>
-                                <Chat></Chat>
+                                <Chat user={user}></Chat>
                             </div>
                         </div>
                         :

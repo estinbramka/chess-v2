@@ -211,8 +211,16 @@ async function leaveLobby(reason, code) {
     //console.log('leave lobby', this.user.id);
 }
 
+async function chat(message) {
+    this.to(Array.from(this.rooms)[1]).emit("chat", {
+        author: this.user,
+        message
+    });
+}
+
 module.exports = {
     joinLobby,
     sendMove,
-    leaveLobby
+    leaveLobby,
+    chat
 };

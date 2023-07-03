@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom"
 import { fetchGet, fetchPost } from "../../function/fetch";
 import { useEffect, useState } from "react";
+import './Login-styles.css'
 
 export default function Login() {
     const [name, setName] = useState('');
@@ -27,8 +28,8 @@ export default function Login() {
     }
 
     return (
-        <form onSubmit={login}>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+        <form onSubmit={login} className="login-form">
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Username" />
             <button onClick={login}>Login</button>
         </form>
     );
